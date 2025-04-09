@@ -28,8 +28,9 @@ public class SalesProcessor {
     
     /**
      * Main method that executes file processing and report generation
-     * @param args command line arguments (not used)
+     * @param args command line arguments 
      */
+    
     public static void main(String[] args) {
         SalesProcessor processor = new SalesProcessor();
         
