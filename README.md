@@ -5,7 +5,9 @@
      * @param args command line arguments (not used)
      */
   Estos tipos de comentarios son conocidos como "comentarios de documentación" o "Javadoc" en Java. Sirven para generar documentación automática del código. Son extremadamente útiles para 
-  documentar APIs y facilitar el entendimiento del código   
+  documentar APIs y facilitar el entendimiento del código.
+
+  Genera documentación automática: Herramientas como javadoc pueden usar estos comentarios para crear documentación en formato HTML automáticamente.
 
 # report-sales
  Reportes de ventas
