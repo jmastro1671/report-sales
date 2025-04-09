@@ -1,3 +1,12 @@
+# aclaracion 
+
+    /**
+     * Main method that executes file processing and report generation
+     * @param args command line arguments (not used)
+     */
+  Estos tipos de comentarios son conocidos como "comentarios de documentación" o "Javadoc" en Java. Sirven para generar documentación automática del código. Son extremadamente útiles para 
+  documentar APIs y facilitar el entendimiento del código   
+
 # report-sales
  Reportes de ventas
  GenerateInfoFiles.java
