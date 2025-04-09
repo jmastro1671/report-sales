@@ -13,10 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Main class that processes seller, product, and sales files
- * to generate sales reports.
- */
+
 public class SalesProcessor {
     
     // Input and output directories
@@ -24,10 +21,10 @@ public class SalesProcessor {
     private static final String OUTPUT_DIR = "reports/";
     
     // Data structures to store information
-    private Map<String, Seller> sellers = new HashMap<>();
-    private Map<String, Product> products = new HashMap<>();
-    private Map<String, List<Sale>> salesBySeller = new HashMap<>();
-    private Map<String, Integer> totalProductsSold = new HashMap<>();
+    private final Map<String, Seller> sellers = new HashMap<>();
+    private final  Map<String, Product> products = new HashMap<>();
+    private final Map<String, List<Sale>> salesBySeller = new HashMap<>();
+    private final Map<String, Integer> totalProductsSold = new HashMap<>();
     
     /**
      * Main method that executes file processing and report generation
@@ -290,10 +287,10 @@ public class SalesProcessor {
      * Internal class to represent a seller
      */
     private static class Seller {
-        private String documentType;
-        private String documentNumber;
-        private String name;
-        private String lastName;
+        private final String documentType;
+        private final String documentNumber;
+        private final String name;
+        private final String lastName;
         
         public Seller(String documentType, String documentNumber, String name, String lastName) {
             this.documentType = documentType;
@@ -323,9 +320,9 @@ public class SalesProcessor {
      * Internal class to represent a product
      */
     private static class Product {
-        private String id;
-        private String name;
-        private double price;
+        private final String id;
+        private final String name;
+        private final double price;
         
         public Product(String id, String name, double price) {
             this.id = id;
@@ -350,8 +347,8 @@ public class SalesProcessor {
      * Internal class to represent a sale
      */
     private static class Sale {
-        private Product product;
-        private int quantity;
+        private final Product product;
+        private final int quantity;
         
         public Sale(Product product, int quantity) {
             this.product = product;
@@ -371,8 +368,8 @@ public class SalesProcessor {
      * Internal class for the seller report
      */
     private static class SellerReport {
-        private Seller seller;
-        private double totalSold;
+        private final Seller seller;
+        private final double totalSold;
         
         public SellerReport(Seller seller, double totalSold) {
             this.seller = seller;
@@ -392,8 +389,8 @@ public class SalesProcessor {
      * Internal class for the product report
      */
     private static class ProductReport {
-        private Product product;
-        private int quantitySold;
+        private final Product product;
+        private final int quantitySold;
         
         public ProductReport(Product product, int quantitySold) {
             this.product = product;
