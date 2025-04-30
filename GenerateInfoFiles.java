@@ -1,4 +1,5 @@
 package entregaUno;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -8,40 +9,42 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Class for generating test files for the sales system.
- * Generates files with sellers, products and random sales.
+ * Clase para generar archivos de prueba para el sistema de ventas.
+ * Genera archivos con vendedores, productos y ventas aleatorias.
  */
 public class GenerateInfoFiles {
     
-    // Constants for file generation
+    // Constantes para la generación de archivos
     private static final String[] DOCUMENT_TYPES = {"CC", "CE", "NIT", "TI", "PP"};
     private static final String[] NAMES = {"Juan", "María", "Carlos", "Ana", "Pedro", "Laura", "Diego", "Sofía", "Miguel", "Valentina"};
     private static final String[] LAST_NAMES = {"Gómez", "Rodríguez", "López", "Martínez", "González", "Pérez", "Sánchez", "Ramírez", "Torres", "Díaz"};
     private static final String[] PRODUCTS = {"Laptop", "Smartphone", "Tablet", "Monitor", "Teclado", "Mouse", "Audífonos", "Impresora", "Cámara", "Altavoces"};
     
-    // Directory where files will be saved
+    // Directorio donde se guardarán los archivos
     private static final String OUTPUT_DIR = "data/";
     
-    // Random number generator
+    // Generador de números aleatorios
     private static final Random random = new Random();
     
     /**
-     * Main method for generating test files
-     * @param args command line arguments
+     * Método principal para generar los archivos de prueba
+     * @param args argumentos de línea de comandos
      */
     public static void main(String[] args) {
-        // Create directory if it doesn't exist
+        System.out.println("Iniciando generación de archivos de prueba...");
+        
+        // Crear directorio si no existe
         File directory = new File(OUTPUT_DIR);
         if (!directory.exists()) {
             directory.mkdirs();
         }
         
         try {
-            // Generate default sellers and products if no arguments are specified
+            // Generar vendedores y productos por defecto si no se especifican argumentos
             int salesmenCount = 5;
             int productsCount = 10;
             
-            // If arguments are provided, use those values
+            // Si se proporcionan argumentos, usar esos valores
             if (args.length >= 1) {
                 salesmenCount = Integer.parseInt(args[0]);
             }
@@ -49,24 +52,26 @@ public class GenerateInfoFiles {
                 productsCount = Integer.parseInt(args[1]);
             }
             
-            // Generate files
+            // Generar archivos
             List<String> salesmen = createSalesmenFile(salesmenCount);
             createProductsFile(productsCount);
             createSalesFiles(salesmen, productsCount);
             
-            System.out.println("Archivos generados exitosamente en el directorio: " + OUTPUT_DIR);
+            System.out.println("Generación de archivos completada exitosamente.");
+            System.out.println("Archivos generados en el directorio: " + OUTPUT_DIR);
         } catch (IOException e) {
             System.err.println("Error al generar los archivos: " + e.getMessage());
+            e.printStackTrace();
         } catch (NumberFormatException e) {
             System.err.println("Error en los argumentos. Uso: java GenerateInfoFiles [numVendedores] [numProductos]");
         }
     }
     
     /**
-     * Creates a file with seller information
-     * @param count number of sellers to generate
-     * @return list of seller identifiers (for creating sales files)
-     * @throws IOException if there's an error writing to the file
+     * Crea un archivo con información de vendedores
+     * @param count número de vendedores a generar
+     * @return lista de identificadores de vendedores (para crear archivos de ventas)
+     * @throws IOException si hay un error al escribir el archivo
      */
     private static List<String> createSalesmenFile(int count) throws IOException {
         List<String> salesmen = new ArrayList<>();
@@ -82,56 +87,59 @@ public class GenerateInfoFiles {
                 writer.write(seller);
                 writer.newLine();
                 
-                // Save identifier for creating sales files
+                // Guardar identificador para crear archivos de ventas
                 salesmen.add(docType + ":" + docNumber);
             }
         }
         
+        System.out.println("Archivo de vendedores generado con " + count + " registros.");
         return salesmen;
     }
     
     /**
-     * Creates a file with product information
-     * @param count number of products to generate
-     * @throws IOException if there's an error writing to the file
+     * Crea un archivo con información de productos
+     * @param count número de productos a generar
+     * @throws IOException si hay un error al escribir el archivo
      */
     private static void createProductsFile(int count) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_DIR + "productos.txt"))) {
             for (int i = 0; i < count; i++) {
                 String id = "P" + String.format("%03d", i + 1);
                 String name = PRODUCTS[i % PRODUCTS.length] + " " + (i / PRODUCTS.length + 1);
-                double price = 10000 + random.nextDouble() * 990000; // Price between 10,000 and 1,000,000
+                double price = 10000 + random.nextDouble() * 990000; // Precio entre 10,000 y 1,000,000
                 
                 String product = id + ":" + name + ":" + String.format("%.2f", price);
                 writer.write(product);
                 writer.newLine();
             }
         }
+        
+        System.out.println("Archivo de productos generado con " + count + " registros.");
     }
     
     /**
-     * Creates sales files for each seller
-     * @param salesmen list of seller identifiers
-     * @param productsCount total number of available products
-     * @throws IOException if there's an error writing to the files
+     * Crea archivos de ventas para cada vendedor
+     * @param salesmen lista de identificadores de vendedores
+     * @param productsCount número total de productos disponibles
+     * @throws IOException si hay un error al escribir los archivos
      */
     private static void createSalesFiles(List<String> salesmen, int productsCount) throws IOException {
         for (String seller : salesmen) {
-            // Create a filename based on the seller's ID
+            // Crear un nombre de archivo basado en el ID del vendedor
             String fileName = seller.replace(":", "_") + ".txt";
             
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_DIR + fileName))) {
-                // First line: seller identification
+                // Primera línea: identificación del vendedor
                 writer.write(seller);
                 writer.newLine();
                 
-                // Generate random sales (between 1 and 5 products sold)
+                // Generar ventas aleatorias (entre 1 y 5 productos vendidos)
                 int numProductsSold = 1 + random.nextInt(5);
                 List<Integer> productsSold = new ArrayList<>();
                 
                 for (int i = 0; i < numProductsSold; i++) {
                     int productId;
-                    // Avoid duplicate products
+                    // Evitar productos duplicados
                     do {
                         productId = random.nextInt(productsCount);
                     } while (productsSold.contains(productId));
@@ -139,7 +147,7 @@ public class GenerateInfoFiles {
                     productsSold.add(productId);
                     
                     String id = "P" + String.format("%03d", productId + 1);
-                    int quantity = 1 + random.nextInt(10); // Between 1 and 10 units
+                    int quantity = 1 + random.nextInt(10); // Entre 1 y 10 unidades
                     
                     String sale = id + ":" + quantity + ";";
                     writer.write(sale);
@@ -147,46 +155,7 @@ public class GenerateInfoFiles {
                 }
             }
         }
-    }
-    
-    /**
-     * Generates a single sales file for a specific seller
-     * @param randomSalesCount number of sales to generate
-     * @param name seller's name
-     * @param id seller's identifier
-     * @throws IOException if there's an error writing to the file
-     */
-    public static void createSalesManFile(int randomSalesCount, String name, String id) throws IOException {
-        // Create directory if it doesn't exist
-        File directory = new File(OUTPUT_DIR);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
         
-        // Generate random document type and number if none is provided
-        String sellerId = id;
-        if (sellerId == null || sellerId.isEmpty()) {
-            String docType = DOCUMENT_TYPES[random.nextInt(DOCUMENT_TYPES.length)];
-            String docNumber = String.format("%08d", random.nextInt(100000000));
-            sellerId = docType + ":" + docNumber;
-        }
-        
-        // Create seller file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_DIR + "vendedor_" + name + ".txt"))) {
-            // First line: seller identification
-            writer.write(sellerId);
-            writer.newLine();
-            
-            // Generate random sales
-            for (int i = 0; i < randomSalesCount; i++) {
-                String productId = "P" + String.format("%03d", i + 1);
-                int quantity = 1 + random.nextInt(10); // Between 1 and 10 units
-                
-                String sale = productId + ":" + quantity + ";";
-                writer.write(sale);
-                writer.newLine();
-            }
-        }
+        System.out.println("Archivos de ventas generados para " + salesmen.size() + " vendedores.");
     }
-    
 }

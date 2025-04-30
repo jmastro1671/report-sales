@@ -13,57 +13,54 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-public class SalesProcessor {
+ //Clase Main como se indico para esta entrega
+public class main {
     
-    // Input and output directories
+    // Directorios de entrada y salida
     private static final String INPUT_DIR = "data/";
     private static final String OUTPUT_DIR = "reports/";
     
-    // Data structures to store information
-    private final Map<String, Seller> sellers = new HashMap<>();
-    private final  Map<String, Product> products = new HashMap<>();
-    private final Map<String, List<Sale>> salesBySeller = new HashMap<>();
-    private final Map<String, Integer> totalProductsSold = new HashMap<>();
-    
-    /**
-     * Main method that executes file processing and report generation
-     * @param args command line arguments 
+    private static final Map<String, Seller> sellers = new HashMap<>();
+    private static final Map<String, Product> products = new HashMap<>();
+    private static final Map<String, List<Sale>> salesBySeller = new HashMap<>();
+    private static final Map<String, Integer> totalProductsSold = new HashMap<>();
+        /**
+     * Método principal que ejecuta el procesamiento de archivos y generación de reportes
+     * @param args argumentos de línea de comandos (no utilizados)
      */
-    
     public static void main(String[] args) {
-        SalesProcessor processor = new SalesProcessor();
+        System.out.println("Iniciando procesamiento de archivos de ventas...");
         
         try {
-            // Create output directory if it doesn't exist
+            // Crear directorio de salida si no existe
             File directory = new File(OUTPUT_DIR);
             if (!directory.exists()) {
                 directory.mkdirs();
             }
             
-            // Load seller and product information
-            processor.loadSellers();
-            processor.loadProducts();
+            // Cargar información de vendedores y productos
+            loadSellers();
+            loadProducts();
             
-            // Process sales files
-            processor.processSalesFiles();
+            // Procesar archivos de ventas
+            processSalesFiles();
             
-            // Generate reports
-            processor.createSellerReport();
-            processor.createProductReport();
+            // Generar reportes
+            createSellerReport();
+            createProductReport();
             
             System.out.println("Procesamiento completado exitosamente. Reportes generados en: " + OUTPUT_DIR);
         } catch (IOException e) {
             System.err.println("Error durante el procesamiento: " + e.getMessage());
-            e.printStackTrace();
+            
         }
     }
     
     /**
-     * Loads seller information from the corresponding file
-     * @throws IOException if there's an error reading the file
+     * Carga la información de vendedores desde el archivo correspondiente
+     * @throws IOException si hay un error al leer el archivo
      */
-    private void loadSellers() throws IOException {
+    private static void loadSellers() throws IOException {
         File sellersFile = new File(INPUT_DIR + "vendedores.txt");
         
         if (!sellersFile.exists()) {
@@ -92,10 +89,10 @@ public class SalesProcessor {
     }
     
     /**
-     * Loads product information from the corresponding file
-     * @throws IOException if there's an error reading the file
+     * Carga la información de productos desde el archivo correspondiente
+     * @throws IOException si hay un error al leer el archivo
      */
-    private void loadProducts() throws IOException {
+    private static void loadProducts() throws IOException {
         File productsFile = new File(INPUT_DIR + "productos.txt");
         
         if (!productsFile.exists()) {
@@ -125,10 +122,10 @@ public class SalesProcessor {
     }
     
     /**
-     * Processes all sales files in the input directory
-     * @throws IOException if there's an error reading the files
+     * Procesa todos los archivos de ventas en el directorio de entrada
+     * @throws IOException si hay un error al leer los archivos
      */
-    private void processSalesFiles() throws IOException {
+    private static void processSalesFiles() throws IOException {
         File directory = new File(INPUT_DIR);
         File[] files = directory.listFiles((dir, name) -> 
             !name.equals("vendedores.txt") && 
@@ -151,13 +148,13 @@ public class SalesProcessor {
     }
     
     /**
-     * Processes an individual sales file
-     * @param file the file to process
-     * @throws IOException if there's an error reading the file
+     * Procesa un archivo individual de ventas
+     * @param file el archivo a procesar
+     * @throws IOException si hay un error al leer el archivo
      */
-    private void processSaleFile(File file) throws IOException {
+    private static void processSaleFile(File file) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            // First line: seller identification
+            // Primera línea: identificación del vendedor
             String firstLine = reader.readLine();
             if (firstLine == null) {
                 System.out.println("Archivo vacío: " + file.getName());
@@ -170,7 +167,7 @@ public class SalesProcessor {
                 return;
             }
             
-            // Read sales
+            // Leer ventas
             String line;
             while ((line = reader.readLine()) != null) {
                 if (line.endsWith(";")) {
@@ -190,7 +187,7 @@ public class SalesProcessor {
                     Product product = products.get(productId);
                     salesBySeller.get(sellerId).add(new Sale(product, quantity));
                     
-                    // Update total product counter
+                    // Actualizar contador total de productos
                     totalProductsSold.put(productId, 
                         totalProductsSold.get(productId) + quantity);
                 }
@@ -199,10 +196,10 @@ public class SalesProcessor {
     }
     
     /**
-     * Generates the seller report ordered by total sales
-     * @throws IOException if there's an error writing the file
+     * Genera el reporte de vendedores ordenado por total de ventas
+     * @throws IOException si hay un error al escribir el archivo
      */
-    private void createSellerReport() throws IOException {
+    private static void createSellerReport() throws IOException {
         List<SellerReport> sellerReports = new ArrayList<>();
         
         for (String sellerId : salesBySeller.keySet()) {
@@ -217,16 +214,16 @@ public class SalesProcessor {
             sellerReports.add(new SellerReport(seller, totalSold));
         }
         
-        // Sort by total sold (highest to lowest)
+        // Ordenar por total vendido (de mayor a menor)
         Collections.sort(sellerReports, Comparator.comparingDouble(SellerReport::getTotalSold).reversed());
         
-        // Generate CSV file
+        // Generar archivo CSV
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_DIR + "reporte_vendedores.csv"))) {
-            // Header
+            // Encabezado
             writer.write("Tipo Documento,Número Documento,Nombre,Apellido,Total Vendido");
             writer.newLine();
             
-            // Data
+            // Datos
             for (SellerReport report : sellerReports) {
                 Seller seller = report.getSeller();
                 // Usar punto como separador decimal para el CSV
@@ -245,10 +242,10 @@ public class SalesProcessor {
     }
     
     /**
-     * Generates the product report ordered by quantity sold
-     * @throws IOException if there's an error writing the file
+     * Genera el reporte de productos ordenado por cantidad vendida
+     * @throws IOException si hay un error al escribir el archivo
      */
-    private void createProductReport() throws IOException {
+    private static void createProductReport() throws IOException {
         List<ProductReport> productReports = new ArrayList<>();
         
         for (String productId : totalProductsSold.keySet()) {
@@ -258,16 +255,16 @@ public class SalesProcessor {
             productReports.add(new ProductReport(product, quantitySold));
         }
         
-        // Sort by quantity sold (highest to lowest)
+        // Ordenar por cantidad vendida (de mayor a menor)
         Collections.sort(productReports, Comparator.comparingInt(ProductReport::getQuantitySold).reversed());
         
-        // Generate CSV file
+        // Generar archivo CSV
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(OUTPUT_DIR + "reporte_productos.csv"))) {
-            // Header
+            // Encabezado
             writer.write("ID,Nombre,Precio,Cantidad Vendida");
             writer.newLine();
             
-            // Data
+            // Datos
             for (ProductReport report : productReports) {
                 Product product = report.getProduct();
                 // Usar coma como separador decimal para el CSV
@@ -285,7 +282,7 @@ public class SalesProcessor {
     }
     
     /**
-     * Internal class to represent a seller
+     * Clase interna para representar a un vendedor
      */
     private static class Seller {
         private final String documentType;
@@ -318,7 +315,7 @@ public class SalesProcessor {
     }
     
     /**
-     * Internal class to represent a product
+     * Clase interna para representar un producto
      */
     private static class Product {
         private final String id;
@@ -345,7 +342,7 @@ public class SalesProcessor {
     }
     
     /**
-     * Internal class to represent a sale
+     * Clase interna para representar una venta
      */
     private static class Sale {
         private final Product product;
@@ -366,7 +363,7 @@ public class SalesProcessor {
     }
     
     /**
-     * Internal class for the seller report
+     * Clase interna para el reporte de vendedores
      */
     private static class SellerReport {
         private final Seller seller;
@@ -387,7 +384,7 @@ public class SalesProcessor {
     }
     
     /**
-     * Internal class for the product report
+     * Clase interna para el reporte de productos
      */
     private static class ProductReport {
         private final Product product;
